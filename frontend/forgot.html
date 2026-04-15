@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Forgot Password — AuthSystem</title>
+  <meta name="description" content="Reset your AuthSystem account password." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- Main Auth Card -->
+  <div class="auth-card">
+
+    <!-- Brand / Logo Section -->
+    <div class="brand">
+      <div class="brand-icon">🔑</div>
+      <h1>Reset Password</h1>
+      <p>Enter your email and a new password</p>
+    </div>
+
+    <!-- Forgot Password Form -->
+    <form id="forgotForm">
+
+      <!-- Email Field -->
+      <div class="form-group">
+        <label for="email">Registered Email</label>
+        <input type="email" id="email" name="email" placeholder="you@example.com" required />
+      </div>
+
+      <!-- New Password Field -->
+      <div class="form-group">
+        <label for="newPassword">New Password</label>
+        <input type="password" id="newPassword" name="newPassword" placeholder="Enter your new password" required />
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" id="forgotBtn" class="btn-primary">
+        Update Password
+      </button>
+    </form>
+
+    <!-- Links -->
+    <div class="auth-links">
+      <p>Remember your password? <a href="index.html">Go to Login</a></p>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>

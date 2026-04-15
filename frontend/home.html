@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home — AuthSystem</title>
+  <meta name="description" content="Your AuthSystem dashboard — protected page." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- Home Page content (script checks login status first) -->
+  <div class="home-container" id="homePage">
+
+    <!-- Logo -->
+    <div class="brand-icon">🏠</div>
+
+    <h1>You're In! 🎉</h1>
+    <p class="subtitle">This is your protected dashboard</p>
+
+    <!-- Welcome Card — data filled by JavaScript -->
+    <div class="welcome-card">
+      <!-- User badge shows username from token -->
+      <div class="user-badge" id="userBadge">👤 Loading...</div>
+
+      <!-- Welcome message from backend -->
+      <p class="welcome-msg" id="welcomeMsg">
+        Fetching your data from the server...
+      </p>
+    </div>
+
+    <!-- Info Card -->
+    <div class="welcome-card" style="margin-bottom: 1.5rem;">
+      <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7;">
+        🔒 This page is <strong style="color: var(--purple-light);">protected</strong>.
+        The server verified your JWT token from the cookie before showing this data.
+        If you weren't logged in, you'd be redirected to login automatically!
+      </p>
+    </div>
+
+    <!-- Logout Button -->
+    <button class="btn-secondary" onclick="logout()">
+      🚪 Logout
+    </button>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
