@@ -246,3 +246,207 @@ async function logout() {
     }, 1000);
   }
 }
+
+// ─────────────────────────────────────────────
+// TODO FUNCTIONALITY
+// ─────────────────────────────────────────────
+
+const TODO_API_BASE = "http://localhost:5000/api/todo";
+
+// todos.json se aur load karo page load hone par
+if (homePage) {
+  loadTodos();
+}
+
+// ─ Todos ko backend se load karo
+async function loadTodos() {
+  try {
+    const response = await fetch(`${TODO_API_BASE}/get-todos`, {
+      method: "GET",
+      headers: authHeaders(),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      renderTodos(data.todos);
+    } else {
+      showToast("Could not load todos", "error");
+    }
+  } catch (error) {
+    showToast("Cannot connect to server", "error");
+  }
+}
+
+// ─ Naya todo add karo
+async function addNewTodo() {
+  const titleInput = document.getElementById("todoTitle");
+  const descriptionInput = document.getElementById("todoDescription");
+
+  const title = titleInput.value.trim();
+  const description = descriptionInput.value.trim();
+
+  if (!title) {
+    showToast("Please enter a todo title", "error");
+    return;
+  }
+
+  try {
+    const response = await fetch(`${TODO_API_BASE}/add-todo`, {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify({ title, description }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      showToast("✅ Todo added successfully!");
+      titleInput.value = "";
+      descriptionInput.value = "";
+      loadTodos(); // todos refresh karo
+    } else {
+      showToast(data.message, "error");
+    }
+  } catch (error) {
+    showToast("Cannot connect to server", "error");
+  }
+}
+
+// ─ Todo ko delete karo
+async function deleteTodo(todoId) {
+  if (!confirm("Kya aap yeh todo delete karna chahte ho?")) {
+    return;
+  }
+
+  try {
+    const response = await fetch(`${TODO_API_BASE}/delete-todo/${todoId}`, {
+      method: "DELETE",
+      headers: authHeaders(),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      showToast("✅ Todo deleted!");
+      loadTodos();
+    } else {
+      showToast(data.message, "error");
+    }
+  } catch (error) {
+    showToast("Cannot connect to server", "error");
+  }
+}
+
+// ─ Todo ko complete/incomplete toggle karo
+async function toggleTodo(todoId, currentCompleted) {
+  try {
+    const response = await fetch(`${TODO_API_BASE}/update-todo/${todoId}`, {
+      method: "PUT",
+      headers: authHeaders(),
+      body: JSON.stringify({ completed: !currentCompleted }),
+    });
+
+    if (response.ok) {
+      loadTodos();
+    } else {
+      showToast("Could not update todo", "error");
+    }
+  } catch (error) {
+    showToast("Cannot connect to server", "error");
+  }
+}
+
+// ─ Edit todo - inline editing
+async function editTodo(todoId, newTitle, newDescription) {
+  if (!newTitle.trim()) {
+    showToast("Title cannot be empty", "error");
+    return;
+  }
+
+  try {
+    const response = await fetch(`${TODO_API_BASE}/update-todo/${todoId}`, {
+      method: "PUT",
+      headers: authHeaders(),
+      body: JSON.stringify({ title: newTitle, description: newDescription }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      showToast("✅ Todo updated!");
+      loadTodos();
+    } else {
+      showToast(data.message, "error");
+    }
+  } catch (error) {
+    showToast("Cannot connect to server", "error");
+  }
+}
+
+// ─ Todos ko HTML mein render karo
+function renderTodos(todos) {
+  const todosList = document.getElementById("todosList");
+
+  if (!todosList) return;
+
+  if (todos.length === 0) {
+    todosList.innerHTML = `
+      <div style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+        <p style="font-size: 3rem; margin-bottom: 0.5rem;">📭</p>
+        <p>Koi todo nahi hai! Naya add karo aur shuru karo 🚀</p>
+      </div>
+    `;
+    return;
+  }
+
+  todosList.innerHTML = todos
+    .map(
+      (todo) => `
+      <div class="todo-item ${todo.completed ? "completed" : ""}">
+        <div class="todo-header">
+          <div class="todo-title">${escapeHtml(todo.title)}</div>
+        </div>
+        
+        ${todo.description ? `<div class="todo-description">${escapeHtml(todo.description)}</div>` : ""}
+        
+        <div class="todo-actions">
+          <button class="todo-btn todo-btn-complete" onclick="toggleTodo(${todo.id}, ${todo.completed})">
+            ${todo.completed ? "↩️ Uncomplete" : "✓ Complete"}
+          </button>
+          <button class="todo-btn todo-btn-edit" onclick="openEditTodo(${todo.id})">
+            ✎ Edit
+          </button>
+          <button class="todo-btn todo-btn-delete" onclick="deleteTodo(${todo.id})">
+            🗑️ Delete
+          </button>
+        </div>
+      </div>
+    `
+    )
+    .join("");
+}
+
+// ─ Edit todo inline
+function openEditTodo(todoId) {
+  const todoItem = event.target.closest(".todo-item");
+  const titleEl = todoItem.querySelector(".todo-title");
+  const descEl = todoItem.querySelector(".todo-description");
+  const actionsEl = todoItem.querySelector(".todo-actions");
+
+  const currentTitle = titleEl.textContent;
+  const currentDesc = descEl ? descEl.textContent : "";
+
+  const newTitle = prompt("Edit todo title:", currentTitle);
+  if (newTitle === null) return;
+
+  const newDesc = prompt("Edit todo description:", currentDesc);
+
+  editTodo(todoId, newTitle, newDesc || "");
+}
+
+// ─ HTML mein special characters ko escape karo (security)
+function escapeHtml(text) {
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
+}

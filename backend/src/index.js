@@ -7,8 +7,9 @@ const express = require("express");
 const cors = require("cors"); // yeh frontend ko backend se baat karne deta hai
 const cookieParser = require("cookie-parser"); // cookies padhne ke liye
 
-// auth routes import karo
+// routes import karo
 const authRoutes = require("./routes/auth.routes");
+const todoRoutes = require("./routes/todo.routes");
 
 const app = express();
 
@@ -18,11 +19,11 @@ const PORT = process.env.PORT || 5000;
 // middleware setup
 
 // cors lagao taaki browser error na de jab frontend backend ko call kare
-// origin woh URL hai jahan hamara frontend chal raha hai (live server ka default)
+// development ke liye sab origins allow kar rahe hain
 app.use(
   cors({
-    origin: "http://127.0.0.1:5500",
-    credentials: true, // yeh important hai - iske bina cookie nahi jayegi frontend tak
+    origin: "*", // development mein sab domains allow kar rahe hain
+    credentials: false, // "*" ke saath credentials false zaruri hai
   })
 );
 
@@ -35,6 +36,10 @@ app.use(cookieParser());
 // routes connect karo
 // matlab jab bhi /api/auth/kuch aayega, woh authRoutes ko jayega
 app.use("/api/auth", authRoutes);
+
+// todo routes connect karo
+// jab bhi /api/todo/kuch aayega, woh todoRoutes ko jayega
+app.use("/api/todo", todoRoutes);
 
 // server start karo
 app.listen(PORT, () => {

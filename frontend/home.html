@@ -31,6 +31,38 @@
       </p>
     </div>
 
+    <!-- ════════════════════════════════════════════════════════ -->
+    <!-- TODO LIST SECTION -->
+    <!-- ════════════════════════════════════════════════════════ -->
+    <div class="welcome-card todo-section">
+      <h2 style="margin-top: 0; color: var(--purple-light);">📝 Your Todo List</h2>
+
+      <!-- Add Todo Form -->
+      <div class="add-todo-form">
+        <input
+          type="text"
+          id="todoTitle"
+          class="todo-input"
+          placeholder="Enter todo title..."
+          required
+        />
+        <textarea
+          id="todoDescription"
+          class="todo-textarea"
+          placeholder="Add description (optional)..."
+          rows="2"
+        ></textarea>
+        <button class="btn-primary" onclick="addNewTodo()" style="width: 100%;">
+          ➕ Add Todo
+        </button>
+      </div>
+
+      <!-- Todos List -->
+      <div id="todosList" class="todos-list">
+        <p style="text-align: center; color: var(--text-secondary);">Loading todos...</p>
+      </div>
+    </div>
+
     <!-- Info Card -->
     <div class="welcome-card" style="margin-bottom: 1.5rem;">
       <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7;">
